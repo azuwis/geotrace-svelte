@@ -15,6 +15,9 @@ module.exports = {
     filename: '[name].js',
     chunkFilename: '[name].[id].js'
   },
+  node: {
+    fs: 'empty'
+  },
   module: {
     rules: [
       {
@@ -38,6 +41,26 @@ module.exports = {
           prod ? MiniCssExtractPlugin.loader : 'style-loader',
           'css-loader'
         ]
+      },
+      {
+        test: /\/ip2region\/lib\/index\.js$/,
+        loader: 'transform-loader?brfs'
+      },
+      {
+        test: /\/ip2region\/lib\/index\.js$/,
+        loader: 'string-replace-loader',
+        options: {
+          multiple: [
+            {
+              search: '!fs.existsSync(this.dbFilePath)',
+              replace: 'false'
+            },
+            {
+              search: 'fs.readFileSync(this.dbFilePath)',
+              replace: 'fs.readFileSync(__dirname + "/../data/ip2region.db")'
+            }
+          ]
+        }
       }
     ]
   },
